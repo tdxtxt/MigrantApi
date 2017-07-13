@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soecode.ton.dao.TaskDao">
+	<!-- 参考http://jaychang.iteye.com/blog/2357143 -->
+	<resultMap id="taskMap" type="com.soecode.ton.entity.Task">
+		<id property="id" column="id"/>
+        <result property="areaId" column="areaId"/>
+        <result property="recruitNum" column="recruitNum"/>
+        <result property="price" column="price"/>
+        <result property="name" column="name"/>
+        <result property="desc" column="desc"/>
+        <result property="detailAddress" column="detailAddress"/>
+        <result property="releaseTime" column="releaseTime"/>
+        <collection property="jobType" ofType="com.soecode.ton.entity.JobType">
+			<result property="id" column="id" />
+			<result property="name" column="typename" />
+		</collection>
+		<collection property="user" ofType="com.soecode.ton.entity.User">
+			<result property="userName" column="userName" />
+			<result property="mobile" column="mobile" />
+		</collection>
+		<collection property="imgs" column="id" select="selectImgByTaskId">
+			<result column="url" />
+		</collection>
+	</resultMap>
+	<select id="query" resultMap="taskMap">
+		SELECT t.id,t.areaId,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId,u.userName,u.mobile,j.id,j.name as typename FROM task t LEFT JOIN user u ON t.userId = u.userId LEFT JOIN jobtype j ON t.jobTypeId = j.id ORDER BY releaseTime DESC LIMIT #{0},#{1}
+	</select>
+	<select id="selectImgByTaskId" resultType="string">
+		select url from
+		task_img where taskId = #{id}
+	</select>   
+	<insert id="insertTask">
+		INSERT ignore INTO Task (id,areaId,jobTypeId,recruitNum,price,name,userId,desc,detailAddress,releaseTime)
+		VALUES (#{taskId},#{areaId},#{jobTypeId},#{recruitNum},#{price},#{name},#{userId},#{desc},#{detailAddress},NOW())
+	</insert>
+	
+	<resultMap id="taskMapByUser" type="com.soecode.ton.entity.Task">  
+        <id property="id" column="id" />  
+        <result property="areaId" column="areaId"/>
+        <result property="jobTypeId" column="jobTypeId"/>
+        <result property="recruitNum" column="recruitNum"/>
+        <result property="price" column="price"/>
+        <result property="name" column="name"/>
+        <result property="desc" column="desc"/>
+        <result property="detailAddress" column="detailAddress"/>
+        <result property="releaseTime" column="releaseTime"/>
+        <collection property="imgs" ofType="string">
+			<result property="url" column="url" />
+		</collection>
+		<collection property="jobType" ofType="com.soecode.ton.entity.JobType">
+			<id property="id" column="typeid"/>
+			<result property="name" column="typename" />
+		</collection>
+    </resultMap>  
+    
+    <select id="getTaskesByUser" resultMap="taskMapByUser">
+     	SELECT t.id,t.areaId,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     		,m.url
+     		,j.id as typeid,j.name as typename
+     		FROM task t 
+     		LEFT JOIN task_img m ON t.id = m.taskId 
+     		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
+     		WHERE t.userId = #{userId} 
+     		ORDER BY releaseTime DESC LIMIT #{start},#{pageSize}
+    	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
+    </select> 
+    <select id="getTaskById" resultMap="taskMapByUser">
+     	SELECT t.id,t.areaId,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     		,m.url
+     		,j.id as typeid,j.name as typename
+     		FROM task t 
+     		LEFT JOIN task_img m ON t.id = m.taskId 
+     		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
+     		WHERE t.id = #{id} 
+    	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
+    </select> 
+    <select id="getTasksByArea" resultMap="taskMapByUser">
+     	SELECT t.id,t.areaId,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     		,m.url
+     		,j.id as typeid,j.name as typename
+     		FROM task t 
+     		LEFT JOIN task_img m ON t.id = m.taskId 
+     		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
+     		WHERE t.areaId = #{areaId} 
+     		ORDER BY releaseTime DESC LIMIT #{start},#{pageSize}
+    	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
+    </select> 
+    <select id="getTasksByJobType" resultMap="taskMapByUser">
+     	SELECT t.id,t.areaId,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     		,m.url
+     		,j.id as typeid,j.name as typename
+     		FROM task t 
+     		LEFT JOIN task_img m ON t.id = m.taskId 
+     		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
+     		WHERE t.jobTypeId = #{jobTypeId} 
+     		ORDER BY releaseTime DESC LIMIT #{start},#{pageSize}
+    	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
+    </select> 
+	<select id="getTasksByAreaAndJobType" resultMap="taskMapByUser">
+     	SELECT t.id,t.areaId,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     		,m.url
+     		,j.id as typeid,j.name as typename
+     		FROM task t 
+     		LEFT JOIN task_img m ON t.id = m.taskId 
+     		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
+     		WHERE t.jobTypeId = #{jobTypeId} AND t.areaId = #{areaId} 
+     		ORDER BY releaseTime DESC LIMIT #{start},#{pageSize}
+    	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
+    </select> 
+    <delete id="deleteTaskById">
+    	DELETE FROM task WHERE id = #{taskId}
+    </delete>
+</mapper>

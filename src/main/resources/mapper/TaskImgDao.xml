@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soecode.ton.dao.TaskImgDao">
+	<insert id="insert">
+		INSERT ignore INTO task_img (id,taskId,url)
+		VALUES (#{id},#{taskId},#{url})
+	</insert>
+	<delete id="deleteByTaskId">
+		DELETE FROM task_img WHERE taskId = #{taskId}
+	</delete>
+	<delete id="deleteById">
+		DELETE FROM task_img WHERE id = #{id}
+	</delete>
+</mapper>
