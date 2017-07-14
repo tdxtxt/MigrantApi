@@ -20,7 +20,11 @@ import com.soecode.ton.dto.city.ReCity;
 import com.soecode.ton.entity.JobType;
 import com.soecode.ton.service.CityService;
 import com.soecode.ton.service.JobTypeService;
-
+/**
+ * https://github.com/tdxtxt/MigrantApi
+ * @author Administrator
+ *
+ */
 @Controller
 @RequestMapping("/comm")
 public class CommApi extends BaseController{
