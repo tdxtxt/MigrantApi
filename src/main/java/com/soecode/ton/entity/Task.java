@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Task {
 	private String id;
-	private String areaId;
+	private City city;
 	private JobType jobType;
 	private String recruitNum;
 	private String price;
@@ -20,13 +20,6 @@ public class Task {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getAreaId() {
-		return areaId;
-	}
-	public void setAreaId(String areaId) {
-		this.areaId = areaId;
-	}
-	
 	public JobType getJobType() {
 		return jobType;
 	}
@@ -80,5 +73,11 @@ public class Task {
 	}
 	public void setImgs(List<String> imgs) {
 		this.imgs = imgs;
+	}
+	public City getCity() {
+		return city;
+	}
+	public void setCity(City city) {
+		this.city = city;
 	}
 }
