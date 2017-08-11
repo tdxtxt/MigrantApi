@@ -10,8 +10,9 @@ public class User {
 	private int type;//用户类型
 	private String mobile;//用户手机
 	private String jobTypeId;//工作类型id
-	private String senior;//工龄
+	private String senior;//熟练度
 	private String areaId;//地区id
+	private String workyear;//工龄
 	public String getUserId() {
 		return userId;
 	}
@@ -77,5 +78,11 @@ public class User {
 	}
 	public void setAreaId(String areaId) {
 		this.areaId = areaId;
+	}
+	public String getWorkyear() {
+		return workyear;
+	}
+	public void setWorkyear(String workyear) {
+		this.workyear = workyear;
 	}
 }

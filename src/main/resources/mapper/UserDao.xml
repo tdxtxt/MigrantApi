@@ -5,45 +5,56 @@
 <mapper namespace="com.soecode.ton.dao.UserDao">
 	 <insert id="insertUser">
 		<!-- ignore 主键冲突，报错 -->
-		INSERT ignore INTO user (userId,otherBundId,userName,mobile,password,type,areaId,jobTypeId,senior,createTime)
-		VALUES (#{userId},#{otherbundId},#{userName},#{mobile},#{password},#{type},#{areaId},#{jobTypeId},#{senior},NOW())
+		INSERT ignore INTO user (userId,otherBundId,userName,mobile,password,type,areaId,jobTypeId,senior,workyear,createTime)
+		VALUES (#{userId},#{otherbundId},#{userName},#{mobile},#{password},#{type},#{areaId},#{jobTypeId},#{senior},#{workyear},NOW())
 	</insert> 
 	<!-- 目的：为dao接口方法提供sql语句配置 -->
-	<select id="queryByName" resultType="com.soecode.ton.entity.User" parameterType="String">
+	<select id="queryByName" resultType="com.soecode.ton.dto.ReUser" parameterType="String">
 		<!-- 具体的sql -->
-		SELECT
-		*
-		FROM
-		user
-		WHERE
-		userName = #{userName}
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		WHERE userName = #{userName}
 	</select>
-	<select id="queryById" resultType="com.soecode.ton.entity.User" parameterType="String">
+	<select id="queryById" resultType="com.soecode.ton.dto.ReUser" parameterType="String">
 		<!-- 具体的sql -->
-		SELECT
-		*
-		FROM
-		user
-		WHERE
-		userId = #{userId}
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		WHERE u.userId = #{userId}
 	</select>
-	<select id="queryByOtherBundId" resultType="com.soecode.ton.entity.User" parameterType="String">
+	<select id="queryUserById" resultType="com.soecode.ton.entity.User" parameterType="String">
 		<!-- 具体的sql -->
-		SELECT
-		*
-		FROM
-		user
-		WHERE
-		otherBundId = #{otherBundId}
+		SELECT * 
+		FROM user
+		WHERE userId = #{userId}
 	</select>
-	<select id="queryByMobile" resultType="com.soecode.ton.entity.User" parameterType="String">
+	
+	<select id="queryByOtherBundId" resultType="com.soecode.ton.dto.ReUser" parameterType="String">
 		<!-- 具体的sql -->
-		SELECT
-		*
-		FROM
-		user
-		WHERE
-		mobile = #{mobile}
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		WHERE u.otherBundId = #{otherBundId}
+	</select>
+	<select id="queryByMobile" resultType="com.soecode.ton.dto.ReUser" parameterType="String">
+		<!-- 具体的sql -->
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		WHERE u.mobile = #{mobile}
 	</select>
 	<select id="countMobile" resultType="Integer" parameterType="String">
 		<!-- 具体的sql -->
@@ -74,10 +85,18 @@
 		mobile = #{mobile},
 		areaId = #{areaId},
 		jobTypeId = #{jobTypeId},
-		senior = #{senior}
+		senior = #{senior},
+		workyear = #{workyear},
+		userState = #{userState}
 		WHERE userId = #{userId}
 	</update>
-	<select id="getUsePeoples" resultType="com.soecode.ton.entity.User">
-		SELECT * FROM user WHERE userState="0" LIMIT #{start},#{pageSize}
+	<select id="getUsePeoples" resultType="com.soecode.ton.dto.ReUser">
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		WHERE u.userState="0" LIMIT #{start},#{pageSize}
 	</select>
 </mapper>

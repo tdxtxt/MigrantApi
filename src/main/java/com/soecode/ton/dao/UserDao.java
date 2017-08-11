@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.soecode.ton.dto.ReUser;
 import com.soecode.ton.entity.User;
 
 public interface UserDao {
@@ -21,7 +22,7 @@ public interface UserDao {
 	 */
 	void insertUser(@Param("userId") String userId,@Param("otherbundId") String otherbundId , @Param("userName") String userName, @Param("mobile") String mobile,
 			@Param("password") String password, @Param("type") int type, @Param("areaId") String areaId,
-			@Param("jobTypeId") String jobTypeId, @Param("senior") String senior);
+			@Param("jobTypeId") String jobTypeId, @Param("senior") String senior,@Param("workyear") String workyear);
 
 	/**
 	 * 通过用户名称获取用户资料
@@ -29,7 +30,7 @@ public interface UserDao {
 	 * @param name
 	 * @return
 	 */
-	User queryByName(String userName);
+	ReUser queryByName(String userName);
 
 	/**
 	 * 通过用户ID获取用户资料
@@ -37,20 +38,26 @@ public interface UserDao {
 	 * @param id
 	 * @return
 	 */
-	User queryById(String userId);
+	ReUser queryById(String userId);
+	/**
+	 * 通过用户ID获取用户资料
+	 * @param id
+	 * @return
+	 */
+	User queryUserById(String userId);
 	/**
 	 * 通过bindid获取用户资料
 	 * 
 	 * @param name
 	 * @return
 	 */
-	User queryByOtherBundId(String otherBundId);
+	ReUser queryByOtherBundId(String otherBundId);
 	/**
 	 * 通过用户mobile获取用户资料
 	 * @param mobile
 	 * @return
 	 */  
-	User queryByMobile(String mobile);
+	ReUser queryByMobile(String mobile);
 	/**
 	 * 更新数据
 	 * 
@@ -62,7 +69,7 @@ public interface UserDao {
 	 * @param senior
 	 */
 	void modifyById(@Param("userId") String userId, @Param("userName") String userName, @Param("mobile") String mobile,
-			@Param("areaId") String areaId, @Param("jobTypeId") String jobTypeId, @Param("senior") String senior);
+			@Param("areaId") String areaId, @Param("jobTypeId") String jobTypeId, @Param("senior") String senior,@Param("userState") int userState,@Param("workyear") String workyear);
 
 	/**
 	 * 查询mobile在数据库的条数
@@ -90,5 +97,5 @@ public interface UserDao {
 	 * @param pageSize
 	 * @return
 	 */
-	List<User> getUsePeoples(@Param("start")int start, @Param("pageSize")int pageSize);
+	List<ReUser> getUsePeoples(@Param("start")int start, @Param("pageSize")int pageSize);
 }
