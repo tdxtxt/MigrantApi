@@ -68,6 +68,17 @@ public class UserServiceImpl implements UserService{
 				localUser.getMobile(), localUser.getAreaId(), localUser.getJobTypeId(), localUser.getSenior(),localUser.getUserState(),localUser.getWorkyear());
 		return true;
 	}
+	@Override
+	public boolean modifyPwdById(String userId, String oldpwd, String newpwd) throws Exception {
+		if(!TextUtils.isEmpty(oldpwd)){
+			User localUser = userDao.queryUserById(userId);
+			if(!oldpwd.equals(localUser.getPassword())){
+				throw new CustomException("旧密码不正确");
+			}
+		}
+		userDao.modifyPwdById(userId, newpwd);
+		return true;
+	}
 	/**
 	 * 数据库中userId,mobile,userName,password,type,createTime绝逼不能为空
 	 * 用户上传值mobile,password,type必须上传
@@ -99,9 +110,15 @@ public class UserServiceImpl implements UserService{
 		return user;
 	}
 	@Override
-	public boolean login(String mobile, String password) throws Exception{
+	public boolean login(String mobile, String password,String type) throws Exception{
 		int count = userDao.countMobile(mobile);
 		if(count == 0) throw new CustomException("该账户未注册");
+		if(!TextUtils.isEmpty(type) && ("1".equals(type) || "0".equals(type))){
+			int number = userDao.countMobileAndType(mobile, type);//0:农民工，1：包工头
+			if(number == 0){
+				throw new CustomException("0".equals(type) ? "该号码已注册为包工头" : "该号码已注册为农民工");
+			}
+		}
 		String pwd = userDao.queryPwdByMobile(mobile);
 		if(password.equals(pwd)){
 			return true;
@@ -119,9 +136,21 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public List<ReUser> getUsePeoples(int pageNum)throws Exception{
+	public List<ReUser> findPeoples(String jobTypeId,String userState,int pageNum)throws Exception{
 		if(pageNum < 1) pageNum = 1;
 		int start = (pageNum - 1) * Constant.PAGE_SIZE;
-		return userDao.getUsePeoples(start,Constant.PAGE_SIZE);
+		if(!TextUtils.isEmpty(jobTypeId)){
+			if(!TextUtils.isEmpty(userState)){
+				return userDao.getJobAndUsePeoples(userState, jobTypeId, start, Constant.PAGE_SIZE);
+			}else{
+				return userDao.getJobPeoples(jobTypeId, start, Constant.PAGE_SIZE);
+			}
+		}else{
+			if (!TextUtils.isEmpty(userState)) {
+				return userDao.getUsePeoples(userState, start, Constant.PAGE_SIZE);
+			} else {
+				return userDao.getAllPeoples(start, Constant.PAGE_SIZE);
+			}
+		}
 	}
 }

@@ -10,10 +10,12 @@
         <result property="price" column="price"/>
         <result property="name" column="name"/>
         <result property="desc" column="desc"/>
+        <result property="pointLat" column="pointLat"/>
+        <result property="pointLon" column="pointLon"/>
         <result property="detailAddress" column="detailAddress"/>
         <result property="releaseTime" column="releaseTime"/>
         <collection property="jobType" ofType="com.soecode.ton.entity.JobType">
-			<result property="id" column="id" />
+			<result property="id" column="typeid" />
 			<result property="name" column="typename" />
 		</collection>
 		<collection property="city" ofType="com.soecode.ton.entity.City">
@@ -29,11 +31,11 @@
 		</collection>
 	</resultMap>
 	<select id="query" resultMap="taskMap">
-		SELECT t.id,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+		SELECT t.id,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId,t.pointLat,t.pointLon
 		,m.url
 		,city.id AS cityid,city.name AS cityname
 		,u.userName,u.mobile
-		,j.id,j.name AS typename 
+		,j.id AS typeid,j.name AS typename 
 		FROM task t 
 		LEFT JOIN user u ON t.userId = u.userId 
 		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
@@ -46,12 +48,26 @@
 		task_img where taskId = #{id}
 	</select>   
 	<insert id="insertTask">
-		INSERT ignore INTO Task (id,areaId,jobTypeId,recruitNum,price,name,userId,desc,detailAddress,releaseTime)
-		VALUES (#{taskId},#{areaId},#{jobTypeId},#{recruitNum},#{price},#{name},#{userId},#{desc},#{detailAddress},NOW())
+		INSERT ignore INTO task (id,areaId,jobTypeId,recruitNum,price,`name`,userId,`desc`,detailAddress,pointLat,pointLon,releaseTime)
+		VALUES (#{taskId},#{areaId},#{jobTypeId},#{recruitNum},#{price},#{name},#{userId},#{desc},#{detailAddress},#{pointLat},#{pointLon},NOW())
 	</insert>
-	
+	<update id="updateTask" parameterType="map">
+		UPDATE task SET
+		areaId = #{areaId},
+		jobTypeId = #{jobTypeId},
+		recruitNum = #{recruitNum},
+		price = #{price},
+		name = #{name},
+		userId = #{userId},
+		`desc` = #{desc},
+		detailAddress = #{detailAddress},
+		pointLat = #{pointLat},
+		pointLon = #{pointLon},
+		releaseTime = NOW()
+		WHERE id = #{taskId}
+	</update>
     <select id="getTaskesByUser" resultMap="taskMap">
-     	SELECT t.id,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     	SELECT t.id,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId,t.pointLat,t.pointLon
      		,m.url
      		,city.id AS cityid,city.name AS cityname
      		,u.userName,u.mobile
@@ -66,7 +82,7 @@
     	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
     </select> 
     <select id="getTaskById" resultMap="taskMap">
-     	SELECT t.id,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     	SELECT t.id,t.name,t.price,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId,t.pointLat,t.pointLon
      		,m.url
      		,city.id AS cityid,city.name AS cityname
      		,u.userName,u.mobile
@@ -79,8 +95,11 @@
      		WHERE t.id = #{id} 
     	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
     </select> 
+    <select id="getTabById" resultType="com.soecode.ton.entity.tab.TabTask" parameterType="String">
+    	SELECT * FROM task WHERE id = #{taskId}
+    </select>
     <select id="getTasksByArea" resultMap="taskMap">
-     	SELECT t.id,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     	SELECT t.id,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId,t.pointLat,t.pointLon
      		,m.url
      		,city.id AS cityid,city.name AS cityname
      		,u.userName,u.mobile
@@ -95,7 +114,7 @@
     	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
     </select> 
     <select id="getTasksByJobType" resultMap="taskMap">
-     	SELECT t.id,t.areaId,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     	SELECT t.id,t.areaId,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId,t.pointLat,t.pointLon
      		,m.url
      		,city.id AS cityid,city.name AS cityname
      		,u.userName,u.mobile
@@ -110,7 +129,7 @@
     	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
     </select> 
 	<select id="getTasksByAreaAndJobType" resultMap="taskMap">
-     	SELECT t.id,t.areaId,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId
+     	SELECT t.id,t.areaId,t.name,t.price,t.recruitNum,t.desc,t.detailAddress,t.releaseTime,t.userId,t.pointLat,t.pointLon
      		,m.url
      		,city.id AS cityid,city.name AS cityname
      		,u.userName,u.mobile

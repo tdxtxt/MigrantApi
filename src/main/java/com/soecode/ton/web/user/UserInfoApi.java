@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.soecode.ton.dto.ReUser;
 import com.soecode.ton.dto.Result;
 import com.soecode.ton.entity.User;
+import com.soecode.ton.exception.CustomException;
 import com.soecode.ton.help.TextUtils;
+import com.soecode.ton.service.PushDeviceService;
 import com.soecode.ton.service.UserService;
 import com.soecode.ton.web.BaseController;
 
@@ -20,6 +22,8 @@ import com.soecode.ton.web.BaseController;
 public class UserInfoApi extends BaseController{
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private PushDeviceService pushService;
 	@ResponseBody
 	@RequestMapping(value = "/userInformation", method = {RequestMethod.POST, RequestMethod.GET})
 	private Result<ReUser> getUserByName(String userName,String userId) {
@@ -66,7 +70,27 @@ public class UserInfoApi extends BaseController{
 		}else{
 			return new Result<ReUser>("userId有误");
 		}
-		
+	}
+	/**
+	 * 修改密码
+	 * @param userId
+	 * @param newpwd
+	 * @param oldpwd
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/modifyPwd", method = {RequestMethod.POST, RequestMethod.GET})
+	private Result<String> modifyPwd(String userId,String newpwd,String oldpwd){
+		if(TextUtils.isEmpty(userId)) return new Result<>(false,"修改账号userid为空");
+		if(TextUtils.isEmpty(newpwd)) return new Result<>(false,"新密码为空");
+		boolean isOk = false;
+		try {
+			isOk = userService.modifyPwdById(userId, oldpwd, newpwd);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result<>(false,e instanceof CustomException ? e.getMessage() : "修改失败:" + e.getMessage());
+		}
+		return new Result<>(isOk,isOk ? "修改成功" : "修改失败");
 	}
 	/**
 	 * 数据库中userId,mobile,userName,password,type,createTime绝逼不能为空
@@ -112,20 +136,32 @@ public class UserInfoApi extends BaseController{
 	}
 	@ResponseBody
 	@RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.GET})
-	private Result<ReUser> login(String mobile,String password){
+	private Result<ReUser> login(String mobile,String password,String type,String pushToken){
 		if(TextUtils.isEmpty(mobile)) return new Result<>("请输入手机号");
 		if(TextUtils.isEmpty(password)) return new Result<>("请输入登录密码");
 		boolean success = false;
 		try {
-			success = userService.login(mobile, password);
+			success = userService.login(mobile, password,type);
 		} catch (Exception e) {
-			return new Result<ReUser>("服务器内部错误:" + e.getMessage());
+			return new Result<ReUser>(e instanceof CustomException ? e.getMessage() : "登陆失败:" + e.getMessage());
 		}
 		if(success){
 			ReUser user = userService.getByMobile(mobile);
+			if(!TextUtils.isEmpty(pushToken)) pushService.saveToken(user.getUserId(), mobile, pushToken);
 			return new Result<ReUser>(user,"登录成功");
 		}
 		return new Result<ReUser>("登录密码不正确");
+	}
+	@ResponseBody
+	@RequestMapping(value = "/logout", method = {RequestMethod.POST, RequestMethod.GET})
+	private Result<String> logout(String pushToken){
+		if(TextUtils.isEmpty(pushToken)) return new Result<>("参数不能为空");
+		try {
+			pushService.deleteToken(pushToken);
+		} catch (Exception e) {
+			return new Result<>(true,"服务器内部错误");
+		}
+		return new Result<>(true,"退出成功");
 	}
 	/**
 	 * 数据库中userId,mobile,userName,password,type,createTime绝逼不能为空
@@ -154,11 +190,11 @@ public class UserInfoApi extends BaseController{
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value="/getUsePeoples", method = {RequestMethod.POST, RequestMethod.GET})
-	private Result<List<ReUser>> getUsePeoples(int pageNum){
+	@RequestMapping(value="/getPeoples", method = {RequestMethod.POST, RequestMethod.GET})
+	private Result<List<ReUser>> getUsePeoples(int pageNum,String jobTypeId,String userState){
 		List<ReUser> peoples = null;
 		try {
-			peoples = userService.getUsePeoples(pageNum);
+			peoples = userService.findPeoples(jobTypeId,userState,pageNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result<>("服务器错误");

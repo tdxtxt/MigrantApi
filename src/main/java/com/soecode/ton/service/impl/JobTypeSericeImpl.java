@@ -16,4 +16,8 @@ public class JobTypeSericeImpl implements JobTypeService {
 	public List<JobType> getAllJobType() {
 		return jobTypeDao.queryAll();
 	}
+	@Override
+	public String getJobNameById(String id) {
+		return jobTypeDao.queryNameById(id);
+	}
 }

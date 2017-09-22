@@ -41,7 +41,8 @@ public interface UserService {
 	 * @param user
 	 */
 	boolean modifyById(User user);
-	boolean login(String mobile,String password) throws Exception;
+	boolean modifyPwdById(String userId,String oldpwd,String newpwd) throws Exception;
+	boolean login(String mobile,String password,String type) throws Exception;
 	boolean otherLogin(String otherBundId) throws Exception;
-	List<ReUser> getUsePeoples(int pageNum)throws Exception;
+	List<ReUser> findPeoples(String jobTypeId,String userState,int pageNum)throws Exception;
 }

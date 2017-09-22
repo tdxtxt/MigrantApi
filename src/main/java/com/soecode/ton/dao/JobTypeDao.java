@@ -6,4 +6,5 @@ import com.soecode.ton.entity.JobType;
 
 public interface JobTypeDao {
 	public List<JobType> queryAll();
+	public String queryNameById(String id);
 }

@@ -10,4 +10,7 @@
 		FROM
 		jobtype
 	</select>
+	<select id="queryNameById" resultType="String" parameterType="String">
+		SELECT name FROM jobtype WHERE id = #{id}
+	</select>
 </mapper>

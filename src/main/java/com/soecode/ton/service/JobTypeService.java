@@ -6,4 +6,5 @@ import com.soecode.ton.entity.JobType;
 
 public interface JobTypeService {
 	List<JobType> getAllJobType();
+	String getJobNameById(String id);
 }

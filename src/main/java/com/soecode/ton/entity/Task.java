@@ -12,6 +12,8 @@ public class Task {
 	private String desc;
 	private String detailAddress;
 	private String releaseTime;
+	private double pointLat;//坐标纬度
+	private double pointLon;//坐标经度
 	private User user;
 	private List<String> imgs;
 	public String getId() {
@@ -79,5 +81,17 @@ public class Task {
 	}
 	public void setCity(City city) {
 		this.city = city;
+	}
+	public double getPointLat() {
+		return pointLat;
+	}
+	public void setPointLat(double pointLat) {
+		this.pointLat = pointLat;
+	}
+	public double getPointLon() {
+		return pointLon;
+	}
+	public void setPointLon(double pointLon) {
+		this.pointLon = pointLon;
 	}
 }

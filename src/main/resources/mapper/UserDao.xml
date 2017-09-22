@@ -56,6 +56,16 @@
 		LEFT JOIN system_acer_code city ON u.areaId = city.id
 		WHERE u.mobile = #{mobile}
 	</select>
+	<select id="countMobileAndType" resultType="Integer" parameterType="String">
+		<!-- 具体的sql -->
+		SELECT
+		COUNT(*)
+		FROM
+		user
+		WHERE
+		mobile = #{mobile} AND type = #{type}
+		LIMIT 1
+	</select>
 	<select id="countMobile" resultType="Integer" parameterType="String">
 		<!-- 具体的sql -->
 		SELECT
@@ -90,6 +100,11 @@
 		userState = #{userState}
 		WHERE userId = #{userId}
 	</update>
+	<update id="modifyPwdById" parameterType="map">
+		UPDATE user SET
+		password = #{password}
+		WHERE userId = #{userId}
+	</update>
 	<select id="getUsePeoples" resultType="com.soecode.ton.dto.ReUser">
 		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
 		,j.name AS jobTypeName
@@ -97,6 +112,35 @@
 		FROM user u
 		LEFT JOIN jobtype j ON u.jobTypeId = j.id
 		LEFT JOIN system_acer_code city ON u.areaId = city.id
-		WHERE u.userState="0" LIMIT #{start},#{pageSize}
+		WHERE u.userState = #{userState} LIMIT #{start},#{pageSize}
+	</select>
+	<select id="getJobPeoples" resultType="com.soecode.ton.dto.ReUser">
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		WHERE u.jobTypeId = #{jobTypeId}
+		ORDER BY userState ASC LIMIT #{start},#{pageSize}
+	</select>
+	<select id="getJobAndUsePeoples" resultType="com.soecode.ton.dto.ReUser">
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		WHERE u.jobTypeId = #{jobTypeId} AND u.userState = #{userState}
+		LIMIT #{start},#{pageSize}
+	</select>
+	<select id="getAllPeoples" resultType="com.soecode.ton.dto.ReUser">
+		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		,j.name AS jobTypeName
+		,city.name AS cityName
+		FROM user u
+		LEFT JOIN jobtype j ON u.jobTypeId = j.id
+		LEFT JOIN system_acer_code city ON u.areaId = city.id
+		ORDER BY userState ASC LIMIT #{start},#{pageSize}
 	</select>
 </mapper>

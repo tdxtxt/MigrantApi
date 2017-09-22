@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soecode.ton.dao.PushDeviceDao">
+	<insert id="insert">
+		INSERT ignore INTO push_system (id,userId,mobile,pushToken)
+		VALUES (UUID(),#{userId},#{mobile},#{pushToken})
+	</insert>
+	<update id="update">
+		UPDATE push_system 
+		SET userId = #{userId} , mobile = #{mobile}
+		WHERE pushToken = #{pushToken}
+	</update>
+	<select id="countToken" resultType="Integer" parameterType="String">
+		<!-- 具体的sql -->
+		SELECT COUNT(*) FROM push_system WHERE pushToken = #{pushToken}
+	</select>
+	<select id="queryTokensByMoblie" resultType="String" parameterType="String">
+		SELECT pushToken FROM push_system WHERE mobile = #{mobile}
+	</select>
+	<select id="queryAllToken" resultType="String">
+		SELECT pushToken FROM push_system
+	</select>
+	<delete id="deleteByUserId">
+		DELETE FROM push_system WHERE userId = #{userId}
+	</delete>
+	<delete id="deleteByToken">
+		DELETE FROM push_system WHERE pushToken = #{pushToken}
+	</delete>
+	
+</mapper>

@@ -2,6 +2,7 @@ package com.soecode.ton.web;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,9 +20,10 @@ import com.soecode.ton.dto.Result;
 import com.soecode.ton.dto.city.ReCity;
 import com.soecode.ton.entity.JobType;
 import com.soecode.ton.service.CityService;
+import com.soecode.ton.service.CustomerService;
 import com.soecode.ton.service.JobTypeService;
 /**
- * https://github.com/tdxtxt/MigrantApi
+ * https://github.com/tdxtxt/MigrantApi.git
  * @author Administrator
  *
  */
@@ -32,6 +34,8 @@ public class CommApi extends BaseController{
 	private CityService cityService;
 	@Autowired
 	private JobTypeService jobTypeService;
+	@Autowired 
+	private CustomerService customerService;
 	
 	@ResponseBody
 	@RequestMapping(value = "/allCity", method={RequestMethod.GET,RequestMethod.POST})
@@ -117,5 +121,16 @@ public class CommApi extends BaseController{
 		List<JobType> jobTypes = jobTypeService.getAllJobType();
 		return new Result<List<JobType>>(jobTypes);
 	}
-	
+	@RequestMapping(value="/getCustomers",method={RequestMethod.GET,RequestMethod.POST})  
+	@ResponseBody
+	public Result<List<String>> getCustomers(){
+		List<String> data = new ArrayList<String>();
+		try {
+			data = customerService.getCustomer("3");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result<List<String>>(true,Arrays.asList("13220286010"),e.getMessage());
+		}
+		return new Result<>(data);
+	}
 }

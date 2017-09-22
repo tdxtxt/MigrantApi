@@ -70,14 +70,21 @@ public interface UserDao {
 	 */
 	void modifyById(@Param("userId") String userId, @Param("userName") String userName, @Param("mobile") String mobile,
 			@Param("areaId") String areaId, @Param("jobTypeId") String jobTypeId, @Param("senior") String senior,@Param("userState") int userState,@Param("workyear") String workyear);
-
+	void modifyPwdById(@Param("userId")String userId,@Param("password")String password);
 	/**
 	 * 查询mobile在数据库的条数
 	 * 
 	 * @param mobile
 	 * @return
 	 */
-	int countMobile(String mobile);
+	int countMobile(@Param("mobile")String mobile);
+	/**
+	 * 查询mobile在数据库的条数
+	 * 
+	 * @param mobile
+	 * @return
+	 */
+	int countMobileAndType(@Param("mobile")String mobile,@Param("type")String type);
 	/**
 	 * 查询userId在数据库的条数
 	 * 
@@ -93,9 +100,22 @@ public interface UserDao {
 	String queryPwdByMobile(String mobile);
 	/**
 	 * 获取空闲工人信息
-	 * @param start
-	 * @param pageSize
 	 * @return
 	 */
-	List<ReUser> getUsePeoples(@Param("start")int start, @Param("pageSize")int pageSize);
+	List<ReUser> getAllPeoples(@Param("start")int start, @Param("pageSize")int pageSize);
+	/**
+	 * 获取空闲工人信息
+	 * @return
+	 */
+	List<ReUser> getUsePeoples(@Param("userState")String userState,@Param("start")int start, @Param("pageSize")int pageSize);
+	/**
+	 * 获取空闲工人信息
+	 * @return
+	 */
+	List<ReUser> getJobPeoples(@Param("jobTypeId")String jobTypeId,@Param("start")int start, @Param("pageSize")int pageSize);
+	/**
+	 * 获取空闲工人信息
+	 * @return
+	 */
+	List<ReUser> getJobAndUsePeoples(@Param("userState")String userState,@Param("jobTypeId")String jobTypeId,@Param("start")int start, @Param("pageSize")int pageSize);
 }
