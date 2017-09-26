@@ -9,13 +9,18 @@
 	</insert>
 	<update id="update">
 		UPDATE push_system 
-		SET userId = #{userId} , mobile = #{mobile}
-		WHERE pushToken = #{pushToken}
+		SET pushToken = #{pushToken} , mobile = #{mobile}
+		WHERE userId = #{userId}
 	</update>
 	<select id="countToken" resultType="Integer" parameterType="String">
 		<!-- 具体的sql -->
 		SELECT COUNT(*) FROM push_system WHERE pushToken = #{pushToken}
 	</select>
+	<select id="countUserId" resultType="Integer" parameterType="String">
+		<!-- 具体的sql -->
+		SELECT COUNT(*) FROM push_system WHERE userId = #{userId}
+	</select>
+	
 	<select id="queryTokensByMoblie" resultType="String" parameterType="String">
 		SELECT pushToken FROM push_system WHERE mobile = #{mobile}
 	</select>

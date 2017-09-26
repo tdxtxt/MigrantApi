@@ -15,8 +15,14 @@ public class PushDeviceServiceImpl implements PushDeviceService {
 	@Override
 	public void saveToken(String userId,String mobile, String pushToken) {
 		if(TextUtils.isEmpty(pushToken)) return;
-		int count = pushDao.countToken(pushToken);
-		if(count > 0){//该设备已经注册到其他账号上了，需要修改
+		
+		int countToken = pushDao.countToken(pushToken);
+		if(countToken > 0){
+			deleteToken(pushToken);
+		}
+		
+		int countUserId = pushDao.countUserId(userId);
+		if(countUserId > 0){//该userid已经注册到其他设备上了
 			pushDao.update(userId,mobile,pushToken);
 		}else{//该设备没有注册，需要新增
 			pushDao.insert(userId, mobile, pushToken);

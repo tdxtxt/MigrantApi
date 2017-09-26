@@ -141,16 +141,21 @@ public class UserServiceImpl implements UserService{
 		int start = (pageNum - 1) * Constant.PAGE_SIZE;
 		if(!TextUtils.isEmpty(jobTypeId)){
 			if(!TextUtils.isEmpty(userState)){
-				return userDao.getJobAndUsePeoples(userState, jobTypeId, start, Constant.PAGE_SIZE);
+				return userDao.getJobAndUsePeoples(Constant.DIFF_VALUE,userState, jobTypeId, start, Constant.PAGE_SIZE);
 			}else{
-				return userDao.getJobPeoples(jobTypeId, start, Constant.PAGE_SIZE);
+				return userDao.getJobPeoples(Constant.DIFF_VALUE,jobTypeId, start, Constant.PAGE_SIZE);
 			}
 		}else{
 			if (!TextUtils.isEmpty(userState)) {
-				return userDao.getUsePeoples(userState, start, Constant.PAGE_SIZE);
+				return userDao.getUsePeoples(Constant.DIFF_VALUE,userState, start, Constant.PAGE_SIZE);
 			} else {
-				return userDao.getAllPeoples(start, Constant.PAGE_SIZE);
+				return userDao.getAllPeoples(Constant.DIFF_VALUE,start, Constant.PAGE_SIZE);
 			}
 		}
+	}
+
+	@Override
+	public void updateRecentUseTime(String userId) {
+		userDao.updateRecentUseTime(userId);
 	}
 }

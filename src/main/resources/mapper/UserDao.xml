@@ -5,8 +5,8 @@
 <mapper namespace="com.soecode.ton.dao.UserDao">
 	 <insert id="insertUser">
 		<!-- ignore 主键冲突，报错 -->
-		INSERT ignore INTO user (userId,otherBundId,userName,mobile,password,type,areaId,jobTypeId,senior,workyear,createTime)
-		VALUES (#{userId},#{otherbundId},#{userName},#{mobile},#{password},#{type},#{areaId},#{jobTypeId},#{senior},#{workyear},NOW())
+		INSERT ignore INTO user (userId,otherBundId,userName,mobile,password,type,areaId,jobTypeId,senior,workyear,createTime,recentUseTime)
+		VALUES (#{userId},#{otherbundId},#{userName},#{mobile},#{password},#{type},#{areaId},#{jobTypeId},#{senior},#{workyear},NOW(),NOW())
 	</insert> 
 	<!-- 目的：为dao接口方法提供sql语句配置 -->
 	<select id="queryByName" resultType="com.soecode.ton.dto.ReUser" parameterType="String">
@@ -100,47 +100,58 @@
 		userState = #{userState}
 		WHERE userId = #{userId}
 	</update>
+	<update id="updateRecentUseTime" parameterType="String">
+		UPDATE user SET
+		recentUseTime = NOW()
+		WHERE userId = #{userId}
+	</update>
 	<update id="modifyPwdById" parameterType="map">
 		UPDATE user SET
 		password = #{password}
 		WHERE userId = #{userId}
 	</update>
 	<select id="getUsePeoples" resultType="com.soecode.ton.dto.ReUser">
-		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		SELECT u.userId,u.userName,u.mobile,u.senior,u.workyear,u.createTime,u.type,u.otherBundId
+		,CASE WHEN ABS(DATEDIFF(recentUseTime,NOW())) &lt;= #{diffValue} THEN 0 ELSE 1 END AS userState
 		,j.name AS jobTypeName
 		,city.name AS cityName
 		FROM user u
 		LEFT JOIN jobtype j ON u.jobTypeId = j.id
 		LEFT JOIN system_acer_code city ON u.areaId = city.id
-		WHERE u.userState = #{userState} LIMIT #{start},#{pageSize}
+		WHERE u.type = 0 AND CASE WHEN ABS(DATEDIFF(recentUseTime,NOW())) &lt;= #{diffValue} THEN 0 ELSE 1 END = #{userState}
+		ORDER BY u.recentUseTime DESC LIMIT #{start},#{pageSize}
 	</select>
 	<select id="getJobPeoples" resultType="com.soecode.ton.dto.ReUser">
-		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		SELECT u.userId,u.userName,u.mobile,u.senior,u.workyear,u.createTime,u.type,u.otherBundId
+		,CASE WHEN ABS(DATEDIFF(recentUseTime,NOW())) &lt;= #{diffValue} THEN 0 ELSE 1 END AS userState
 		,j.name AS jobTypeName
 		,city.name AS cityName
 		FROM user u
 		LEFT JOIN jobtype j ON u.jobTypeId = j.id
 		LEFT JOIN system_acer_code city ON u.areaId = city.id
-		WHERE u.jobTypeId = #{jobTypeId}
-		ORDER BY userState ASC LIMIT #{start},#{pageSize}
+		WHERE u.type = 0 AND u.jobTypeId = #{jobTypeId}
+		ORDER BY u.recentUseTime DESC LIMIT #{start},#{pageSize}
 	</select>
 	<select id="getJobAndUsePeoples" resultType="com.soecode.ton.dto.ReUser">
-		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		SELECT u.userId,u.userName,u.mobile,u.senior,u.workyear,u.createTime,u.type,u.otherBundId
+		,CASE WHEN ABS(DATEDIFF(recentUseTime,NOW())) &lt;= #{diffValue} THEN 0 ELSE 1 END AS userState
 		,j.name AS jobTypeName
 		,city.name AS cityName
 		FROM user u
 		LEFT JOIN jobtype j ON u.jobTypeId = j.id
 		LEFT JOIN system_acer_code city ON u.areaId = city.id
-		WHERE u.jobTypeId = #{jobTypeId} AND u.userState = #{userState}
-		LIMIT #{start},#{pageSize}
+		WHERE u.type = 0 AND u.jobTypeId = #{jobTypeId} AND userState = #{userState}
+		ORDER BY u.recentUseTime DESC LIMIT #{start},#{pageSize}
 	</select>
 	<select id="getAllPeoples" resultType="com.soecode.ton.dto.ReUser">
-		SELECT u.userId,u.userName,u.type,u.mobile,u.senior,u.workyear,u.createTime,u.userState,u.otherBundId
+		SELECT u.userId,u.userName,u.mobile,u.senior,u.workyear,u.createTime,u.type,u.otherBundId
+		,CASE WHEN ABS(DATEDIFF(recentUseTime,NOW())) &lt;= #{diffValue} THEN 0 ELSE 1 END AS userState
 		,j.name AS jobTypeName
 		,city.name AS cityName
 		FROM user u
 		LEFT JOIN jobtype j ON u.jobTypeId = j.id
 		LEFT JOIN system_acer_code city ON u.areaId = city.id
-		ORDER BY userState ASC LIMIT #{start},#{pageSize}
+		WHERE u.type = 0
+		ORDER BY u.recentUseTime DESC LIMIT #{start},#{pageSize}
 	</select>
 </mapper>

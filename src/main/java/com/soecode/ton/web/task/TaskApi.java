@@ -5,6 +5,9 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import com.soecode.ton.help.TextUtils;
 import com.soecode.ton.service.JobTypeService;
 import com.soecode.ton.service.PushDeviceService;
 import com.soecode.ton.service.TaskService;
+import com.soecode.ton.service.UserService;
 
 import cn.jpush.api.JPushHelper;
 
@@ -30,12 +34,20 @@ public class TaskApi {
 	private TaskService taskService;
 	@Autowired
 	private PushDeviceService pushService;
+	@Autowired
+	private UserService userService;
 	//分页获取职务
 	@ResponseBody
 	@RequestMapping(value = "/getTaskes", method = {RequestMethod.POST, RequestMethod.GET})
-	public Result<List<Task>> getTaskes(int pageNum){
+	public Result<List<Task>> getTaskes(HttpServletRequest request,HttpServletResponse response,String userId,int pageNum){
 		List<Task> tasks = taskService.getTasks(pageNum);
 		Result<List<Task>> result = new Result<List<Task>>(tasks);
+		try {
+			if(TextUtils.isEmpty(userId) && request != null) userId = request.getHeader("userId");
+			if(pageNum == 1 && !TextUtils.isEmpty(userId)) userService.updateRecentUseTime(userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 	//发布职务,imgs表示上传的工程图片地址,多张图片需要用逗号隔开
@@ -148,9 +160,9 @@ public class TaskApi {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTasksByAreaOrJobtype", method = {RequestMethod.POST, RequestMethod.GET})
-	public Result<List<Task>> getTasksByAreaOrJobtype(String areaId,String jobTypeId,int pageNum){
+	public Result<List<Task>> getTasksByAreaOrJobtype(HttpServletRequest request,HttpServletResponse response,String userId,String areaId,String jobTypeId,int pageNum){
 		if(TextUtils.isEmpty(areaId) && TextUtils.isEmpty(jobTypeId)){
-			return getTaskes(pageNum);
+			return getTaskes(request,response,userId,pageNum);
 		}
 		List<Task> data = taskService.getTasksByArea(areaId, jobTypeId, pageNum);
 		return new Result<>(data);

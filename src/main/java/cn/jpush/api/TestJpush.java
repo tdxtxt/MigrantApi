@@ -1,5 +1,6 @@
 package cn.jpush.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.jiguang.common.ClientConfig;
@@ -15,6 +16,7 @@ public class TestJpush {
 	public static String MASTER_SECRET = "40e35ba3ec2b2b8445f316c1";
 	public static String APP_KEY = "2bb9015da508f346cab38b53";
 	public static void main(String[] args) {
+		
 		JPushClient jpushClient = new JPushClient(MASTER_SECRET, APP_KEY, null, ClientConfig.getInstance());
 		try {
 			PushResult result = jpushClient.sendPush(buildPushObject_all_alias_alert());
@@ -33,10 +35,13 @@ public class TestJpush {
 		}
 	}
 	public static PushPayload buildPushObject_all_alias_alert() {
+		List<String> registids = new ArrayList<>();
+		registids.add("170976fa8a84b917843x");
+		registids.add("170976fa8a84b917843");
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
-                .setAudience(Audience.all())
-                .setNotification(Notification.alert("Content"))
+                .setAudience(Audience.registrationId(registids))
+                .setNotification(Notification.alert("Content12"))
                 .build();
     }
 }

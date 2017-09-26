@@ -147,7 +147,7 @@ public class UserInfoApi extends BaseController{
 		}
 		if(success){
 			ReUser user = userService.getByMobile(mobile);
-			if(!TextUtils.isEmpty(pushToken)) pushService.saveToken(user.getUserId(), mobile, pushToken);
+			if(!TextUtils.isEmpty(pushToken) && "0".equals(type)) pushService.saveToken(user.getUserId(), mobile, pushToken);
 			return new Result<ReUser>(user,"登录成功");
 		}
 		return new Result<ReUser>("登录密码不正确");

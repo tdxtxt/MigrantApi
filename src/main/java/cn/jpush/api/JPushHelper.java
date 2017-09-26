@@ -2,6 +2,8 @@ package cn.jpush.api;
 
 import java.util.List;
 
+import com.soecode.ton.help.Logs;
+
 import cn.jiguang.common.ClientConfig;
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
@@ -38,12 +40,15 @@ public class JPushHelper {
 					// 请求结束后，调用 NettyHttpClient 中的 close 方法，否则进程不会退出。
 					jpushClient.close();
 				} catch (InterruptedException e) {
+					Logs.error(e.getMessage());
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				} catch (APIConnectionException e) {
+					Logs.error(e.getMessage());
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				} catch (APIRequestException e) {
+					Logs.error(e.getMessage());
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}				
@@ -54,7 +59,7 @@ public class JPushHelper {
 	public PushPayload buildPayloadAllClient(List<String> tagValues,String content){
 		return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
-                .setAudience(Audience.tag(tagValues))
+                .setAudience(Audience.registrationId(tagValues))
                 .setNotification(Notification.alert(content))
                 .build();
 	}

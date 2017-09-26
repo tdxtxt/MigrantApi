@@ -23,7 +23,11 @@ public interface UserDao {
 	void insertUser(@Param("userId") String userId,@Param("otherbundId") String otherbundId , @Param("userName") String userName, @Param("mobile") String mobile,
 			@Param("password") String password, @Param("type") int type, @Param("areaId") String areaId,
 			@Param("jobTypeId") String jobTypeId, @Param("senior") String senior,@Param("workyear") String workyear);
-
+	/**
+	 * 更新访问时间
+	 * @param userId
+	 */
+	void updateRecentUseTime(@Param("userId")String userId);
 	/**
 	 * 通过用户名称获取用户资料
 	 * 
@@ -102,20 +106,21 @@ public interface UserDao {
 	 * 获取空闲工人信息
 	 * @return
 	 */
-	List<ReUser> getAllPeoples(@Param("start")int start, @Param("pageSize")int pageSize);
+	List<ReUser> getAllPeoples(@Param("diffValue") int diffValue,@Param("start")int start, @Param("pageSize")int pageSize);
 	/**
 	 * 获取空闲工人信息
 	 * @return
 	 */
-	List<ReUser> getUsePeoples(@Param("userState")String userState,@Param("start")int start, @Param("pageSize")int pageSize);
+	List<ReUser> getUsePeoples(@Param("diffValue") int diffValue,@Param("userState")String userState,@Param("start")int start, @Param("pageSize")int pageSize);
 	/**
 	 * 获取空闲工人信息
 	 * @return
 	 */
-	List<ReUser> getJobPeoples(@Param("jobTypeId")String jobTypeId,@Param("start")int start, @Param("pageSize")int pageSize);
+	List<ReUser> getJobPeoples(@Param("diffValue") int diffValue,@Param("jobTypeId")String jobTypeId,@Param("start")int start, @Param("pageSize")int pageSize);
 	/**
 	 * 获取空闲工人信息
 	 * @return
 	 */
-	List<ReUser> getJobAndUsePeoples(@Param("userState")String userState,@Param("jobTypeId")String jobTypeId,@Param("start")int start, @Param("pageSize")int pageSize);
+	List<ReUser> getJobAndUsePeoples(@Param("diffValue") int diffValue,@Param("userState")String userState,@Param("jobTypeId")String jobTypeId,@Param("start")int start, @Param("pageSize")int pageSize);
+	
 }

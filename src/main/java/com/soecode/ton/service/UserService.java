@@ -45,4 +45,5 @@ public interface UserService {
 	boolean login(String mobile,String password,String type) throws Exception;
 	boolean otherLogin(String otherBundId) throws Exception;
 	List<ReUser> findPeoples(String jobTypeId,String userState,int pageNum)throws Exception;
+	void updateRecentUseTime(String userId);
 }
