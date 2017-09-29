@@ -140,7 +140,7 @@
 		FROM user u
 		LEFT JOIN jobtype j ON u.jobTypeId = j.id
 		LEFT JOIN system_acer_code city ON u.areaId = city.id
-		WHERE u.type = 0 AND u.jobTypeId = #{jobTypeId} AND userState = #{userState}
+		WHERE u.type = 0 AND u.jobTypeId = #{jobTypeId} AND CASE WHEN ABS(DATEDIFF(recentUseTime,NOW())) &lt;= #{diffValue} THEN 0 ELSE 1 END = #{userState}
 		ORDER BY u.recentUseTime DESC LIMIT #{start},#{pageSize}
 	</select>
 	<select id="getAllPeoples" resultType="com.soecode.ton.dto.ReUser">

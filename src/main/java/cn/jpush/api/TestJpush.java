@@ -7,6 +7,7 @@ import cn.jiguang.common.ClientConfig;
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
 import cn.jpush.api.push.PushResult;
+import cn.jpush.api.push.model.Message;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
@@ -36,12 +37,16 @@ public class TestJpush {
 	}
 	public static PushPayload buildPushObject_all_alias_alert() {
 		List<String> registids = new ArrayList<>();
-		registids.add("170976fa8a84b917843x");
-		registids.add("170976fa8a84b917843");
+		registids.add("120c83f76020ee6a046");
+		registids.add("160a3797c8006053ca4");
+		registids.add("13065ffa4e0ca27629f");
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
                 .setAudience(Audience.registrationId(registids))
-                .setNotification(Notification.alert("Content12"))
+                .setMessage(Message.newBuilder()
+                      .setMsgContent("MSG:收到消息请回话....")//必须要加msg
+                      .addExtra("taskId", "test").build())
+              .setNotification(Notification.alert("收到消息请回话...."))
                 .build();
     }
 }

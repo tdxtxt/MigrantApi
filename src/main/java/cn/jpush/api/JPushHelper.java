@@ -8,6 +8,7 @@ import cn.jiguang.common.ClientConfig;
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
 import cn.jpush.api.push.PushResult;
+import cn.jpush.api.push.model.Message;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
@@ -28,14 +29,14 @@ public class JPushHelper {
         final static JPushHelper instance = new JPushHelper();
     }
 	private JPushHelper() {}
-	public void sendTaskToClientUser(List<String> tagValues,String taskDesc) throws Exception{
+	public void sendTaskToClientUser(List<String> tagValues,String taskDesc,String taskId) throws Exception{
 		if(jpushClient == null) jpushClient = new JPushClient(MASTER_SECRET, APP_KEY, null, ClientConfig.getInstance());
 		if(!(tagValues != null && tagValues.size() > 0)) return;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					PushResult result = jpushClient.sendPush(buildPayloadAllClient(tagValues, taskDesc));
+					PushResult result = jpushClient.sendPush(buildPayloadAllClient(tagValues, taskDesc,taskId));
 					Thread.sleep(5000);
 					// 请求结束后，调用 NettyHttpClient 中的 close 方法，否则进程不会退出。
 					jpushClient.close();
@@ -56,10 +57,13 @@ public class JPushHelper {
 		}).start();
 		
 	}
-	public PushPayload buildPayloadAllClient(List<String> tagValues,String content){
+	public PushPayload buildPayloadAllClient(List<String> tagValues,String content,String taskId){
 		return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
                 .setAudience(Audience.registrationId(tagValues))
+                .setMessage(Message.newBuilder()
+                        .setMsgContent(taskId)//必须要加msg
+                        .addExtra("taskId", taskId).build())
                 .setNotification(Notification.alert(content))
                 .build();
 	}

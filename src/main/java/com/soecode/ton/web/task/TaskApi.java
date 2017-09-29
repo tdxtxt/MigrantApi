@@ -71,7 +71,7 @@ public class TaskApi {
 			String jobTypeName = jobTypeService.getJobNameById(jobTypeId);
 			String taskdesc = TextUtils.isEmpty(name) ? "工程名称" + "(招聘" + jobTypeName + ")" : "工程名称:" + name + "\n" + "(招聘" + jobTypeName + ")";
 			List<String> tagValues = pushService.getAllToken();
-			JPushHelper.getInstance().sendTaskToClientUser(tagValues,taskdesc);
+			JPushHelper.getInstance().sendTaskToClientUser(tagValues,taskdesc,taskId);
 		} catch (Exception e) {
 			return new Result<>(true,taskId,"发布成功");
 		}

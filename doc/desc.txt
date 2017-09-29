@@ -1,0 +1,21 @@
+极光推送 :  cqyzg   NJI90okm@
+
+阿里云   :  重庆易知工  cqyzgwlkjyxgs@
+
+服务器ESC:  root   NJI90okm@
+
+MySQL    :  root 123qwe
+
+tomcat	 :  tdx tdx
+
+tomcat: cd到tomcat的bin目录
+	启动：./startup.sh   
+	关闭：./shutdown.sh
+https://github.com/jaywcjlove/mysql-tutorial/blob/master/chapter2/2.3.md
+mysql :	启动：service mysqld start
+	停止：service mysqld stop
+	重启：service mysqld restart
+	查看状态：service mysqld status
+	查看状态：systemctl status mysqld.service
+	登录：mysql -u用户名 -p用户密码
+http://www.cnblogs.com/good_hans/archive/2010/03/29/1700046.html

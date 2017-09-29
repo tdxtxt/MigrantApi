@@ -109,7 +109,7 @@
      		LEFT JOIN task_img m ON t.id = m.taskId 
      		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
      		LEFT JOIN system_acer_code city ON t.areaId = city.id
-     		WHERE t.areaId = #{areaId} 
+     		WHERE CASE WHEN (#{areaId} LIKE '%0000') THEN (t.areaId LIKE REPLACE('$%','$',SUBSTRING(#{areaId},1,2))) ELSE (t.areaId = #{areaId}) END
      		ORDER BY releaseTime DESC LIMIT #{start},#{pageSize}
     	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
     </select> 
@@ -139,7 +139,7 @@
      		LEFT JOIN task_img m ON t.id = m.taskId 
      		LEFT JOIN jobtype j ON t.jobTypeId = j.id 
      		LEFT JOIN system_acer_code city ON t.areaId = city.id
-     		WHERE t.jobTypeId = #{jobTypeId} AND t.areaId = #{areaId} 
+     		WHERE t.jobTypeId = #{jobTypeId} AND CASE WHEN (#{areaId} LIKE '%0000') THEN (t.areaId LIKE REPLACE('$%','$',SUBSTRING(#{areaId},1,2))) ELSE (t.areaId = #{areaId}) END
      		ORDER BY releaseTime DESC LIMIT #{start},#{pageSize}
     	<!-- SELECT t.*,m.url FROM task t LEFT JOIN task_img m ON t.id = m.taskId WHERE t.userId = #{userId} -->
     </select> 
